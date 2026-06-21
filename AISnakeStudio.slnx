@@ -1,6 +1,0 @@
-<Solution>
-  <Folder Name="/tests/">
-    <Project Path="tests/AISnakeStudio.Tests/AISnakeStudio.Tests.csproj" />
-  </Folder>
-  <Project Path="AISnakeStudio.csproj" />
-</Solution>

@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\AISnakeStudio.csproj" />
+    <ProjectReference Include="..\..\AISnakeGame.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/tests/">
+    <Project Path="tests/AISnakeGame.Tests/AISnakeGame.Tests.csproj" />
+  </Folder>
+  <Project Path="AISnakeGame.csproj" />
+</Solution>
