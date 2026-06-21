@@ -1,0 +1,179 @@
+@page "/"
+@using AISnakeStudio.GameEngine
+@using System.Timers
+@inject IJSRuntime JSRuntime
+@implements IDisposable
+
+<PageTitle>AI Snake Studio</PageTitle>
+
+<div class="container mt-4 text-center" @onkeydown="HandleKeyDown" tabindex="0" @ref="_gameContainer">
+    <h1>AI Snake Studio</h1>
+    <p class="lead">Fully AI-Driven Snake - Phase 4 (AI Rules & Themes)</p>
+
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8 card p-3 shadow-sm text-start">
+            <div class="mb-3">
+                <label class="form-label fw-bold">AI Studio Prompt</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" @bind="_aiPrompt"
+                           placeholder="e.g. 'Zero gravity space with teleporting edges' or 'High speed neon matrix'"
+                           disabled="@_isGenerating" @onkeyup="HandlePromptKeyUp" />
+                    <button class="btn btn-primary" @onclick="GenerateAIConfig" disabled="@_isGenerating">
+                        @if (_isGenerating)
+                        {
+                            <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+                            <span>Thinking...</span>
+                        }
+                        else
+                        {
+                            <span>Apply AI Vision</span>
+                        }
+                    </button>
+                </div>
+                <div class="mt-1 d-flex justify-content-between align-items-center">
+                    <span class="small text-muted">AI Backend: <span class="badge bg-secondary">@_aiBackend</span></span>
+                    <div>
+                        <span class="badge bg-info me-1">Walls: @(_gameState.Rules.Walls ? "ON" : "OFF")</span>
+                        <span class="badge bg-warning me-1">Teleport: @(_gameState.Rules.Teleport ? "ON" : "OFF")</span>
+                        <span class="badge bg-success">Speed: @(_gameState.Rules.SpeedMultiplier)x</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="game-wrapper position-relative d-inline-block">
+        <canvas id="gameCanvas" width="400" height="400" style="border: 2px solid #333;"></canvas>
+        <div class="score-board mt-2">
+            <h3>Score: @_gameState.Score</h3>
+        </div>
+    </div>
+
+    <div class="controls-info mt-3">
+        <p>Use Arrow Keys to move. Press Space to restart when Game Over.</p>
+    </div>
+</div>
+
+@code {
+    private GameState _gameState = default!;
+    private ThemeRenderer _renderer = default!;
+    private ThemeManager _themeManager = new();
+    private TransformersJsConfigGenerator _aiGenerator = default!;
+    private Timer _gameTimer = default!;
+    private ElementReference _gameContainer;
+
+    private string _aiPrompt = "";
+    private bool _isGenerating = false;
+    private string _aiBackend = "Checking...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        _gameState = new GameState(20, 20);
+        _renderer = new ThemeRenderer(JSRuntime, "gameCanvas");
+        _aiGenerator = new TransformersJsConfigGenerator(JSRuntime);
+
+        _gameTimer = new Timer(150);
+        _gameTimer.Elapsed += async (sender, e) => await Tick();
+        _gameTimer.AutoReset = true;
+        _gameTimer.Start();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await _gameContainer.FocusAsync();
+            _aiBackend = await _aiGenerator.GetBackendInfoAsync();
+            StateHasChanged();
+        }
+    }
+
+    private async Task Tick()
+    {
+        if (!_gameState.IsGameOver)
+        {
+            _gameState.Update();
+            await _renderer.RenderAsync(_gameState, _themeManager.CurrentTheme);
+            await InvokeAsync(StateHasChanged);
+        }
+        else
+        {
+            await _renderer.RenderAsync(_gameState, _themeManager.CurrentTheme);
+        }
+    }
+
+    private void HandleKeyDown(KeyboardEventArgs e)
+    {
+        switch (e.Key)
+        {
+            case "ArrowUp": _gameState.Snake.SetDirection(Direction.Up); break;
+            case "ArrowDown": _gameState.Snake.SetDirection(Direction.Down); break;
+            case "ArrowLeft": _gameState.Snake.SetDirection(Direction.Left); break;
+            case "ArrowRight": _gameState.Snake.SetDirection(Direction.Right); break;
+            case " ":
+                if (_gameState.IsGameOver)
+                {
+                    _gameState.Reset();
+                }
+                break;
+        }
+    }
+
+    private async Task HandlePromptKeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await GenerateAIConfig();
+        }
+    }
+
+    private async Task GenerateAIConfig()
+    {
+        if (string.IsNullOrWhiteSpace(_aiPrompt)) return;
+
+        _isGenerating = true;
+        try
+        {
+            var config = await _aiGenerator.GenerateConfigAsync(_aiPrompt);
+            if (config != null)
+            {
+                if (config.Theme != null)
+                {
+                    _themeManager.AddTheme(config.Theme);
+                    _themeManager.SetTheme(config.Theme.Name);
+                }
+                if (config.Rules != null)
+                {
+                    _gameState.Rules = config.Rules;
+                    // Adjust timer based on speed multiplier
+                    _gameTimer.Interval = 150 / (config.Rules.SpeedMultiplier > 0 ? config.Rules.SpeedMultiplier : 1);
+                }
+            }
+        }
+        finally
+        {
+            _isGenerating = false;
+            await _gameContainer.FocusAsync();
+        }
+    }
+
+    public void Dispose()
+    {
+        _gameTimer?.Dispose();
+    }
+}
+
+<style>
+    .container {
+        outline: none;
+    }
+    canvas {
+        image-rendering: pixelated;
+    }
+    .badge {
+        font-size: 0.8rem;
+    }
+    .card {
+        background-color: #f8f9fa;
+    }
+</style>
