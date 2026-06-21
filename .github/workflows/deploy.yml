@@ -1,4 +1,5 @@
-name: Build and Deploy
+name: Build and Deploy Blazor WebAssembly
+
 on:
   push:
     branches:
@@ -24,30 +25,53 @@ jobs:
           dotnet-version: '10.0.x'
           include-prerelease: true
 
-      - name: Install dependencies
+      - name: Restore dependencies
         run: dotnet restore
 
-      - name: Build 🔧
+      - name: Build Release
         run: dotnet build -c Release --no-restore
 
-      - name: Publish 📦
+      - name: Publish Blazor WebAssembly
         run: dotnet publish AISnakeStudio.csproj -c Release -o publish
 
-      - name: Prepare deployment 📁
+      - name: Verify _framework directory
         run: |
-          mkdir build
-          cp -r publish/wwwroot/* build/
-          touch build/.nojekyll
+          echo "Contents of publish/wwwroot/_framework:"
+          ls -la publish/wwwroot/_framework/ || echo "_framework directory not found!"
+          echo ""
+          echo "Looking for blazor.webassembly.js:"
+          find publish/wwwroot/_framework -name "*blazor*" -type f || echo "No blazor files found!"
 
+      - name: Prepare deployment
+        run: |
+          mkdir -p build
+          cp -r publish/wwwroot/* build/
+          
+          # Ensure _framework directory is copied
+          if [ -d "publish/wwwroot/_framework" ]; then
+            cp -r publish/wwwroot/_framework build/
+          fi
+          
+          # Create .nojekyll to disable Jekyll processing
+          touch build/.nojekyll
+          
           # Fix base href for GitHub Pages subfolder
           sed -i 's/<base href="\/" \/>/<base href="\/AISnakeGame\/" \/>/g' build/index.html
-
-          # Copy index.html to 404.html to handle client-side routing on GitHub Pages
+          
+          # Copy index.html to 404.html for client-side routing
           cp build/index.html build/404.html
+          
+          # Verify what we're deploying
+          echo "Build directory contents:"
+          ls -la build/
+          echo ""
+          echo "Build/_framework directory:"
+          ls -la build/_framework/ 2>/dev/null || echo "_framework not in build!"
 
-      - name: Deploy 🚀
+      - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           branch: gh-pages
           folder: build
           clean: true
+          single-commit: true
