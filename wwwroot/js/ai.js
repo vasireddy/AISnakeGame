@@ -7,26 +7,31 @@ env.useBrowserCache = true;
 let generator = null;
 let modelName = 'Xenova/SmolLM2-360M-Instruct';
 
-window.aiBridge = {
-    init: async function() {
-        if (generator) return;
+// Use a self-initializing approach
+async function getGenerator() {
+    if (!generator) {
+        console.log("Loading AI model...");
         generator = await pipeline('text-generation', modelName, {
             device: navigator.gpu ? 'webgpu' : 'wasm'
         });
-    },
+        console.log("AI model loaded.");
+    }
+    return generator;
+}
 
+window.aiBridge = {
     getBackendInfo: function() {
         return navigator.gpu ? "WebGPU" : "WASM (CPU Fallback)";
     },
 
     generateConfig: async function(prompt) {
-        await this.init();
+        const gen = await getGenerator();
 
         const systemPrompt = `You are a game designer for a Snake game.
 Generate a JSON object containing both "theme" and "rules" based on the user's prompt.
 
 Theme fields: name, snakeColor, snakeHeadColor, foodColor, backgroundColor, gridColor, textColor, fontFamily.
-Rules fields: walls (bool), teleport (bool), speedMultiplier (float).
+Rules fields: walls (bool), teleport (bool), speedMultiplier (float), ghostMode (bool).
 
 The JSON must follow this exact format:
 {
@@ -38,14 +43,15 @@ The JSON must follow this exact format:
   "rules": {
     "walls": true,
     "teleport": false,
-    "speedMultiplier": 1.0
+    "speedMultiplier": 1.0,
+    "ghostMode": false
   }
 }
 Only output the JSON object. No other text.`;
 
         const fullPrompt = `<|im_start|>system\n${systemPrompt}<|im_end|>\n<|im_start|>user\n${prompt}<|im_end|>\n<|im_start|>assistant\n`;
 
-        const output = await generator(fullPrompt, {
+        const output = await gen(fullPrompt, {
             max_new_tokens: 250,
             temperature: 0.7,
             do_sample: true,
@@ -68,3 +74,5 @@ Only output the JSON object. No other text.`;
         }
     }
 };
+
+console.log("AI Bridge initialized.");
