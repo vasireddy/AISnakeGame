@@ -1,0 +1,35 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish
+        run: dotnet publish AISnakeStudio.csproj -c Release -o release
+
+      - name: Fix Service Worker and Base Href (Optional for Subfolders)
+        run: |
+          # If deploying to a subfolder (username.github.io/repo-name/),
+          # you might need to adjust the <base href="/" /> in index.html.
+          # For a custom domain or root deployment, keep it as /.
+          # sed -i 's/<base href="\/" \/>/<base href="\/AI-Snake-Studio\/" \/>/g' release/wwwroot/index.html
+
+          # GitHub Pages requires a .nojekyll file to prevent Jekyll from processing WASM files
+          touch release/wwwroot/.nojekyll
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: release/wwwroot
+          branch: gh-pages
