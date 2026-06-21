@@ -12,7 +12,7 @@ Learning Note:
 This is a "Data-Driven" approach. The Renderer interprets this data to decide how to draw.
 */
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public class Theme
 {

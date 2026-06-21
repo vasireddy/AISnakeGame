@@ -12,7 +12,7 @@ Using a single JSON contract for both visuals and behavior ensures the AI's "vis
 for the game is applied consistently.
 */
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public class GameConfiguration
 {

@@ -11,7 +11,7 @@ Learning Objective:
 Isolating game entities. Food is a simple entity with a position.
 */
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public class Food
 {

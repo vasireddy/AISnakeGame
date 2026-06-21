@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using AISnakeStudio;
-using AISnakeStudio.GameEngine;
+using AISnakeGame;
+using AISnakeGame.GameEngine;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

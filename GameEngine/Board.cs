@@ -12,7 +12,7 @@ Learning Objective:
 Separation of Concerns: The board only cares about its size and boundaries.
 */
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public class Board
 {

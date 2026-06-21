@@ -11,7 +11,7 @@ Learning Note:
 This acts as a "Rule Engine" or "Interpreter". It translates high-level data into engine behavior.
 */
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public class RuleInterpreter
 {

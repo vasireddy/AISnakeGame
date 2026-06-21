@@ -5,7 +5,7 @@ This guide will help you rebuild AI Snake Studio from scratch, focusing on the C
 ## Step 1: Initialize the Project
 Create a new Blazor WebAssembly standalone project.
 ```bash
-dotnet new blazorwasm -o AISnakeStudio
+dotnet new blazorwasm -o AISnakeGame
 ```
 
 ## Step 2: The Core Game Engine (C#)

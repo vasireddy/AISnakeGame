@@ -16,7 +16,7 @@ using Microsoft.JSInterop;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public class TransformersJsConfigGenerator : IGameConfigurationGenerator
 {
