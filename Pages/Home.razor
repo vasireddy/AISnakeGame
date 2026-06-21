@@ -2,6 +2,7 @@
 @using AISnakeStudio.GameEngine
 @using System.Timers
 @inject IJSRuntime JSRuntime
+@inject IGameConfigurationGenerator AIGenerator
 @implements IDisposable
 
 <PageTitle>AI Snake Studio</PageTitle>
@@ -58,7 +59,6 @@
     private GameState _gameState = default!;
     private ThemeRenderer _renderer = default!;
     private ThemeManager _themeManager = new();
-    private TransformersJsConfigGenerator _aiGenerator = default!;
     private Timer _gameTimer = default!;
     private ElementReference _gameContainer;
 
@@ -70,7 +70,6 @@
     {
         _gameState = new GameState(20, 20);
         _renderer = new ThemeRenderer(JSRuntime, "gameCanvas");
-        _aiGenerator = new TransformersJsConfigGenerator(JSRuntime);
 
         _gameTimer = new Timer(150);
         _gameTimer.Elapsed += async (sender, e) => await Tick();
@@ -83,7 +82,7 @@
         if (firstRender)
         {
             await _gameContainer.FocusAsync();
-            _aiBackend = await _aiGenerator.GetBackendInfoAsync();
+            _aiBackend = await AIGenerator.GetBackendInfoAsync();
             StateHasChanged();
         }
     }
@@ -134,7 +133,7 @@
         _isGenerating = true;
         try
         {
-            var config = await _aiGenerator.GenerateConfigAsync(_aiPrompt);
+            var config = await AIGenerator.GenerateConfigAsync(_aiPrompt);
             if (config != null)
             {
                 if (config.Theme != null)
@@ -145,7 +144,6 @@
                 if (config.Rules != null)
                 {
                     _gameState.Rules = config.Rules;
-                    // Adjust timer based on speed multiplier
                     _gameTimer.Interval = 150 / (config.Rules.SpeedMultiplier > 0 ? config.Rules.SpeedMultiplier : 1);
                 }
             }
