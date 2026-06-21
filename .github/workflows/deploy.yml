@@ -23,14 +23,13 @@ jobs:
           cp -r publish/wwwroot/* build/
           touch build/.nojekyll
 
-          # Fix base href for GitHub Pages subfolder
-          # We use a more robust sed pattern
+          # Explicitly set base href for AISnakeGame subfolder
           sed -i 's/<base href="\/" \/>/<base href="\/AISnakeGame\/" \/>/g' build/index.html
 
-          # Copy index.html to 404.html to handle client-side routing on GitHub Pages
+          # Support client-side routing fallback
           cp build/index.html build/404.html
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: build # The folder the action should deploy.
+          folder: build

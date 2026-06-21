@@ -11,10 +11,17 @@ let modelName = 'Xenova/SmolLM2-360M-Instruct';
 async function getGenerator() {
     if (!generator) {
         console.log("Loading AI model...");
-        generator = await pipeline('text-generation', modelName, {
-            device: navigator.gpu ? 'webgpu' : 'wasm'
-        });
-        console.log("AI model loaded.");
+        try {
+            generator = await pipeline('text-generation', modelName, {
+                device: navigator.gpu ? 'webgpu' : 'wasm'
+            });
+            console.log("AI model loaded.");
+        } catch (err) {
+            console.error("Failed to load WebGPU model, falling back to WASM", err);
+            generator = await pipeline('text-generation', modelName, {
+                device: 'wasm'
+            });
+        }
     }
     return generator;
 }
@@ -25,9 +32,10 @@ window.aiBridge = {
     },
 
     generateConfig: async function(prompt) {
-        const gen = await getGenerator();
+        try {
+            const gen = await getGenerator();
 
-        const systemPrompt = `You are a game designer for a Snake game.
+            const systemPrompt = `You are a game designer for a Snake game.
 Generate a JSON object containing both "theme" and "rules" based on the user's prompt.
 
 Theme fields: name, snakeColor, snakeHeadColor, foodColor, backgroundColor, gridColor, textColor, fontFamily.
@@ -49,18 +57,17 @@ The JSON must follow this exact format:
 }
 Only output the JSON object. No other text.`;
 
-        const fullPrompt = `<|im_start|>system\n${systemPrompt}<|im_end|>\n<|im_start|>user\n${prompt}<|im_end|>\n<|im_start|>assistant\n`;
+            const fullPrompt = `<|im_start|>system\n${systemPrompt}<|im_end|>\n<|im_start|>user\n${prompt}<|im_end|>\n<|im_start|>assistant\n`;
 
-        const output = await gen(fullPrompt, {
-            max_new_tokens: 250,
-            temperature: 0.7,
-            do_sample: true,
-            return_full_text: false
-        });
+            const output = await gen(fullPrompt, {
+                max_new_tokens: 250,
+                temperature: 0.7,
+                do_sample: true,
+                return_full_text: false
+            });
 
-        let text = output[0].generated_text;
+            let text = output[0].generated_text;
 
-        try {
             const start = text.indexOf('{');
             const end = text.lastIndexOf('}') + 1;
             if (start !== -1 && end !== -1) {
@@ -69,7 +76,7 @@ Only output the JSON object. No other text.`;
             JSON.parse(text);
             return text;
         } catch (e) {
-            console.error("AI JSON Parse Error:", text);
+            console.error("AI Generation Error:", e);
             return null;
         }
     }
