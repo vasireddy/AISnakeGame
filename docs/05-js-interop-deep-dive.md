@@ -13,21 +13,23 @@ Use `IJSRuntime.InvokeAsync<T>` or `InvokeVoidAsync`.
 
 Use `[JSInvokable]` attribute on a C# method.
 
-**Example:**
-In JS: `DotNet.invokeMethodAsync('AssemblyName', 'MethodName', args);`
-
 ## Sequence in AI Snake Studio
+
+We use Dependency Injection to manage the AI connection. The UI depends on the `IGameConfigurationGenerator` interface, which is implemented by the `TransformersJsConfigGenerator`.
 
 ```mermaid
 sequenceDiagram
-    participant C as C# (Blazor)
+    participant UI as Home.razor (C#)
+    participant C as TransformersJsConfigGenerator (C#)
     participant J as JS (ai.js)
     participant T as Transformers.js
 
+    UI->>C: GenerateConfigAsync(prompt)
     C->>J: aiBridge.generateConfig(prompt)
     J->>T: generator(fullPrompt)
     T-->>J: text response
     J-->>J: parse JSON
     J-->>C: return JSON string
     C-->>C: Deserialize to GameConfiguration
+    C-->>UI: GameConfiguration object
 ```

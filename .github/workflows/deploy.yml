@@ -4,6 +4,11 @@ on:
   push:
     branches: [ main ]
 
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -33,3 +38,4 @@ jobs:
         with:
           folder: release/wwwroot
           branch: gh-pages
+          token: ${{ secrets.GITHUB_TOKEN }}

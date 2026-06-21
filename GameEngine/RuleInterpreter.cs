@@ -5,10 +5,10 @@ Purpose:
 Interprets the GameRules and applies them to the GameState.
 
 Why this file exists:
-Contains the logic for how rules like "Teleport" or "Walls" are actually executed.
+Contains the logic for how rules and powerups are actually executed.
 
 Learning Note:
-This acts as a "Rule Engine" or "Interpreter". It translates high-level data (JSON) into low-level engine behavior.
+This acts as a "Rule Engine" or "Interpreter". It translates high-level data into engine behavior.
 */
 
 namespace AISnakeStudio.GameEngine;
@@ -32,6 +32,24 @@ public class RuleInterpreter
             {
                 state.Snake.TeleportTo(newHead);
             }
+        }
+    }
+
+    public void ApplyPowerup(GameState state, Powerup powerup)
+    {
+        switch (powerup.Type)
+        {
+            case PowerupType.ScoreBoost:
+                state.AddScore(50);
+                break;
+            case PowerupType.SpeedDown:
+                state.Rules.SpeedMultiplier *= 0.8f;
+                break;
+            case PowerupType.Ghost:
+                state.Rules.GhostMode = true;
+                // Note: In a real game, this would be timed.
+                // For simplicity here, it lasts until the next game/reset or AI config.
+                break;
         }
     }
 

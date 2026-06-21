@@ -2,7 +2,14 @@
 READ THIS FIRST
 
 Purpose:
-Implements IAIThemeGenerator (now acting as IAIConfigGenerator) via JS Interop.
+Implements IGameConfigurationGenerator by communicating with Transformers.js via JS Interop.
+
+Why this file exists:
+Acts as the primary bridge between .NET and the browser-based AI model.
+
+Learning Note:
+This implementation handles the complexities of JS Interop, model initialization,
+and JSON parsing.
 */
 
 using Microsoft.JSInterop;
@@ -11,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace AISnakeStudio.GameEngine;
 
-public class TransformersJsConfigGenerator
+public class TransformersJsConfigGenerator : IGameConfigurationGenerator
 {
     private readonly IJSRuntime _jsRuntime;
     private static readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
@@ -32,6 +39,7 @@ public class TransformersJsConfigGenerator
         }
         catch
         {
+            // In a real app, we might retry or try to fix the JSON
             return null;
         }
     }

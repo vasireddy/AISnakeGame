@@ -8,8 +8,7 @@ Why this file exists:
 Encapsulates the logic of "How to draw a theme" separately from "What to draw" (GameState).
 
 Learning Note:
-This demonstrates the Open/Closed Principle. If we want to add complex theme effects (like glows),
-we can do it here without breaking the basic Snake movement logic.
+This demonstrates the Open/Closed Principle.
 */
 
 using Microsoft.JSInterop;
@@ -36,6 +35,10 @@ public class ThemeRenderer
         {
             snake = gameState.Snake.Body,
             food = gameState.Food.Position,
+            powerup = gameState.ActivePowerup != null ? new {
+                pos = gameState.ActivePowerup.Position,
+                type = gameState.ActivePowerup.Type.ToString()
+            } : null,
             cellSize = _cellSize,
             width = gameState.Board.Width * _cellSize,
             height = gameState.Board.Height * _cellSize,

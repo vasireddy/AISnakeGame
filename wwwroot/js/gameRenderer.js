@@ -45,6 +45,22 @@ window.gameRenderer = {
         ctx.fillStyle = theme.foodColor;
         ctx.fillRect(data.food.x * data.cellSize, data.food.y * data.cellSize, data.cellSize - 1, data.cellSize - 1);
 
+        // Draw powerup if exists
+        if (data.powerup) {
+            ctx.fillStyle = '#ffeb3b'; // Yellow for powerups
+            ctx.beginPath();
+            const centerX = data.powerup.pos.x * data.cellSize + data.cellSize / 2;
+            const centerY = data.powerup.pos.y * data.cellSize + data.cellSize / 2;
+            ctx.arc(centerX, centerY, data.cellSize / 2 - 2, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = 'black';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(data.powerup.type[0], centerX, centerY);
+        }
+
         // Game Over overlay
         if (data.isGameOver) {
             ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
