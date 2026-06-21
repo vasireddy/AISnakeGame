@@ -73,6 +73,5 @@ jobs:
         with:
           folder: build
           branch: gh-pages
-          folder: build
           clean: true
           single-commit: true
