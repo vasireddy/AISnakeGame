@@ -23,6 +23,11 @@ jobs:
           cp -r publish/wwwroot/* build/
           touch build/.nojekyll
 
+          # Fix base href for GitHub Pages subfolder
+          # Since the URL is https://vasireddy.github.io/AISnakeGame,
+          # base href must be /AISnakeGame/
+          sed -i 's/<base href="\/" \/>/<base href="\/AISnakeGame\/" \/>/g' build/index.html
+
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
