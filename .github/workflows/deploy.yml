@@ -1,41 +1,34 @@
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches: [ main ]
-
+name: Build and Deploy
+on: [push]
 permissions:
   contents: write
-  pages: write
-  id-token: write
-
 jobs:
-  deploy:
+  build-and-deploy:
+    concurrency: ci-${{ github.ref }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '10.0.x'
+          include-prerelease: true
 
-      - name: Publish
-        run: dotnet publish AISnakeStudio.csproj -c Release -o release
-
-      - name: Fix Service Worker and Base Href (Optional for Subfolders)
+      - name: Install and Build 🔧
         run: |
-          # If deploying to a subfolder (username.github.io/repo-name/),
-          # you might need to adjust the <base href="/" /> in index.html.
-          # For a custom domain or root deployment, keep it as /.
-          # sed -i 's/<base href="\/" \/>/<base href="\/AI-Snake-Studio\/" \/>/g' release/wwwroot/index.html
+          dotnet publish AISnakeStudio.csproj -c Release -o publish
+          mkdir build
+          cp -r publish/wwwroot/* build/
+          touch build/.nojekyll
 
-          # GitHub Pages requires a .nojekyll file to prevent Jekyll from processing WASM files
-          touch release/wwwroot/.nojekyll
+          # Fix base href for GitHub Pages subfolder
+          # Since the URL is https://vasireddy.github.io/AISnakeGame,
+          # base href must be /AISnakeGame/
+          sed -i 's/<base href="\/" \/>/<base href="\/AISnakeGame\/" \/>/g' build/index.html
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: release/wwwroot
-          branch: gh-pages
-          token: ${{ secrets.GITHUB_TOKEN }}
+          folder: build # The folder the action should deploy.
