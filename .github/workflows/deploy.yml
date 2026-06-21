@@ -54,11 +54,11 @@ jobs:
           
           # Create .nojekyll to disable Jekyll processing
           touch build/.nojekyll
-          
-          # Fix base href for GitHub Pages subfolder
+
+          # Explicitly set base href for AISnakeGame subfolder
           sed -i 's/<base href="\/" \/>/<base href="\/AISnakeGame\/" \/>/g' build/index.html
-          
-          # Copy index.html to 404.html for client-side routing
+
+          # Support client-side routing fallback
           cp build/index.html build/404.html
           
           # Verify what we're deploying
@@ -71,6 +71,7 @@ jobs:
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
+          folder: build
           branch: gh-pages
           folder: build
           clean: true
