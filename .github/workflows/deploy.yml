@@ -32,7 +32,7 @@ jobs:
         run: dotnet build -c Release --no-restore
 
       - name: Publish Blazor WebAssembly
-        run: dotnet publish AISnakeStudio.csproj -c Release -o publish
+        run: dotnet publish AISnakeGame.csproj -c Release -o publish
 
       - name: Verify _framework directory
         run: |

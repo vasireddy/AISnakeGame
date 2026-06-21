@@ -1,7 +1,7 @@
-using AISnakeStudio.GameEngine;
+using AISnakeGame.GameEngine;
 using Xunit;
 
-namespace AISnakeStudio.Tests;
+namespace AISnakeGame.Tests;
 
 public class RuleTests
 {

@@ -14,7 +14,7 @@ This demonstrates the Open/Closed Principle.
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public class ThemeRenderer
 {

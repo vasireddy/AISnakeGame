@@ -15,7 +15,7 @@ This class uses JS Interop to communicate with the browser's Canvas API.
 using Microsoft.JSInterop;
 using System.Threading.Tasks;
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public class Renderer
 {

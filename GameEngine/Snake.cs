@@ -14,7 +14,7 @@ The snake doesn't know about the UI or the Renderer. It only knows its body segm
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public enum Direction
 {

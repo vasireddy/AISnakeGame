@@ -12,7 +12,7 @@ This demonstrates how to add new entities to the engine that are only
 active when certain rules are enabled.
 */
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public enum PowerupType
 {

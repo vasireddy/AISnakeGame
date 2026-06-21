@@ -14,7 +14,7 @@ By centralizing the game state here, we make the game predictable and easier to 
 using System;
 using System.Linq;
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public class GameState
 {

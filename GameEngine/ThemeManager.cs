@@ -13,7 +13,7 @@ This manager allows the UI to easily switch between different visual styles.
 
 using System.Collections.Generic;
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public class ThemeManager
 {

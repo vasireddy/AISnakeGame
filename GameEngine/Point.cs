@@ -11,6 +11,6 @@ Learning Objective:
 Understand how to use C# records for simple data structures in game logic.
 */
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public record Point(int X, int Y);

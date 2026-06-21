@@ -12,7 +12,7 @@ Learning Note:
 This is part of a "Data-Driven Design" where the engine behavior is controlled by data structures.
 */
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public class GameRules
 {

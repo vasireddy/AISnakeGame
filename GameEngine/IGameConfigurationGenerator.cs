@@ -15,7 +15,7 @@ AI implementations.
 
 using System.Threading.Tasks;
 
-namespace AISnakeStudio.GameEngine;
+namespace AISnakeGame.GameEngine;
 
 public interface IGameConfigurationGenerator
 {
