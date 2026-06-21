@@ -1,7 +1,15 @@
 name: Build and Deploy
-on: [push]
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
 permissions:
   contents: write
+  pages: write
+  id-token: write
+
 jobs:
   build-and-deploy:
     concurrency: ci-${{ github.ref }}
@@ -16,15 +24,22 @@ jobs:
           dotnet-version: '10.0.x'
           include-prerelease: true
 
-      - name: Install and Build 🔧
+      - name: Install dependencies
+        run: dotnet restore
+
+      - name: Build 🔧
+        run: dotnet build -c Release --no-restore
+
+      - name: Publish 📦
+        run: dotnet publish AISnakeStudio.csproj -c Release -o publish
+
+      - name: Prepare deployment 📁
         run: |
-          dotnet publish AISnakeStudio.csproj -c Release -o publish
           mkdir build
           cp -r publish/wwwroot/* build/
           touch build/.nojekyll
 
           # Fix base href for GitHub Pages subfolder
-          # We use a more robust sed pattern
           sed -i 's/<base href="\/" \/>/<base href="\/AISnakeGame\/" \/>/g' build/index.html
 
           # Copy index.html to 404.html to handle client-side routing on GitHub Pages
@@ -33,4 +48,6 @@ jobs:
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: build # The folder the action should deploy.
+          branch: gh-pages
+          folder: build
+          clean: true
