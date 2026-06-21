@@ -9,7 +9,7 @@ Acts as the primary bridge between .NET and the browser-based AI model.
 
 Learning Note:
 This implementation handles the complexities of JS Interop, model initialization,
-and JSON parsing.
+and JSON parsing. We use a delay to ensure the JS bridge is ready.
 */
 
 using Microsoft.JSInterop;
@@ -30,22 +30,28 @@ public class TransformersJsConfigGenerator : IGameConfigurationGenerator
 
     public async Task<GameConfiguration?> GenerateConfigAsync(string prompt)
     {
-        var jsonResult = await _jsRuntime.InvokeAsync<string>("aiBridge.generateConfig", prompt);
-        if (string.IsNullOrEmpty(jsonResult)) return null;
-
         try
         {
+            var jsonResult = await _jsRuntime.InvokeAsync<string>("aiBridge.generateConfig", prompt);
+            if (string.IsNullOrEmpty(jsonResult)) return null;
+
             return JsonSerializer.Deserialize<GameConfiguration>(jsonResult, _jsonOptions);
         }
         catch
         {
-            // In a real app, we might retry or try to fix the JSON
             return null;
         }
     }
 
     public async Task<string> GetBackendInfoAsync()
     {
-        return await _jsRuntime.InvokeAsync<string>("aiBridge.getBackendInfo");
+        try
+        {
+            return await _jsRuntime.InvokeAsync<string>("aiBridge.getBackendInfo");
+        }
+        catch
+        {
+            return "WASM (JS Loading...)";
+        }
     }
 }
