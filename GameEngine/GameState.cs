@@ -19,8 +19,8 @@ namespace AISnakeStudio.GameEngine;
 public class GameState
 {
     public Board Board { get; }
-    public Snake Snake { get; private set; }
-    public Food Food { get; private set; }
+    public Snake Snake { get; private set; } = default!;
+    public Food Food { get; private set; } = default!;
     public Powerup? ActivePowerup { get; private set; }
     public int Score { get; private set; }
     public bool IsGameOver { get; private set; }
