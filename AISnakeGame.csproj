@@ -11,7 +11,9 @@
     <PublishReadyToRun>false</PublishReadyToRun>
     <PublishSingleFile>false</PublishSingleFile>
     <InvariantGlobalization>false</InvariantGlobalization>
-    <StaticWebAssetFingerprintPattern Include="JS" Pattern="*.js" Expression="#[.{fingerprint}]!" />
+
+    <!-- Correct usage: StaticWebAssetFingerprintPattern is a property, not an item with Include -->
+    <StaticWebAssetFingerprintPattern>**\*.js;**\*.css;**\*.html</StaticWebAssetFingerprintPattern>
   </PropertyGroup>
 
   <ItemGroup>
