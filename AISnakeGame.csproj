@@ -6,14 +6,16 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <OverrideHtmlAssetPlaceholders>true</OverrideHtmlAssetPlaceholders>
     <BlazorEnableCompression>false</BlazorEnableCompression>
-    <BlazorWebAssemblyStandaloneFingerprint>false</BlazorWebAssemblyStandaloneFingerprint>
+
+    <!-- Disable fingerprinting to ensure static host compatibility -->
+    <FingerprintAssets>false</FingerprintAssets>
+    <WasmFingerprintAssets>false</WasmFingerprintAssets>
+    <StaticWebAssetFingerprintingEnabled>false</StaticWebAssetFingerprintingEnabled>
+
     <PublishTrimmed>false</PublishTrimmed>
     <PublishReadyToRun>false</PublishReadyToRun>
     <PublishSingleFile>false</PublishSingleFile>
     <InvariantGlobalization>false</InvariantGlobalization>
-
-    <!-- Correct usage: StaticWebAssetFingerprintPattern is a property, not an item with Include -->
-    <StaticWebAssetFingerprintPattern>**\*.js;**\*.css;**\*.html</StaticWebAssetFingerprintPattern>
   </PropertyGroup>
 
   <ItemGroup>

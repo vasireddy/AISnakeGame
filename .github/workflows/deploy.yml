@@ -34,24 +34,14 @@ jobs:
       - name: Publish Blazor WebAssembly
         run: dotnet publish AISnakeGame.csproj -c Release -o publish
 
-      - name: Verify _framework directory
-        run: |
-          echo "Contents of publish/wwwroot/_framework:"
-          ls -la publish/wwwroot/_framework/ || echo "_framework directory not found!"
-          echo ""
-          echo "Looking for blazor.webassembly.js:"
-          find publish/wwwroot/_framework -name "*blazor*" -type f || echo "No blazor files found!"
-
       - name: Prepare deployment
         run: |
           mkdir -p build
           cp -r publish/wwwroot/* build/
           
-          # Ensure _framework directory is copied
-          if [ -d "publish/wwwroot/_framework" ]; then
-            cp -r publish/wwwroot/_framework build/
-          fi
-          
+          # Rename fingerprinted blazor.webassembly.js
+          mv build/_framework/blazor.webassembly.*.js build/_framework/blazor.webassembly.js
+
           # Create .nojekyll to disable Jekyll processing
           touch build/.nojekyll
 
